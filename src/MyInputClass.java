@@ -19,4 +19,22 @@ public class MyInputClass {
         return str;
 
     }
+
+    public static String[] ParsData() {
+        String[] data = inputString().split(" ");
+        if (checkCountData(data) == 1) return data;
+        if (checkCountData(data) == -1) {
+            System.out.println("¬ведЄнных данных недостаточно");
+        }
+        if (checkCountData(data) == 0){
+            System.out.println("¬ведены лишние данные");
+        }
+        return null;
+
+    }
+
+    public static int checkCountData(String[] data) {
+        if (data.length < 4) return -1;
+        return data.length == 4 ? 1 : 0;
+    }
 }
