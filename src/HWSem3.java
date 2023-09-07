@@ -1,3 +1,6 @@
+import java.io.FileWriter;
+import java.io.IOException;
+
 public class HWSem3 {
     /*
         Напишите приложение, которое будет запрашивать у пользователя следующие данные, разделенные пробелом:
@@ -32,13 +35,54 @@ public class HWSem3 {
      */
 
     public static void main(String[] args) {
-        String[] str = MyInputClass.ParsData();
-        if (str != null) {
-            for (String data : str) {
-                System.out.println(data);
+        System.out.println("Введите данные в одну строку:<Имя><Фамилия><Отчество><номер телефона>");
+        String stringPersonData = MyInputClass.inputString();
+        String[] personData = ParsData(stringPersonData);
+
+        if (MyCheckClass.checkCodeError(personData)) {
+            try {
+                MyCheckClass.checkPhone(personData[3]);
+                for (int i = 0; i < personData.length - 1; i++) {
+                    MyCheckClass.checkName(personData[i]);
+                }
+                System.out.println("Введенные ФИО корректны.");
+                writeToFile(personData);
+
+            } catch (MyExceptionPhone e) {
+                System.out.println(e.getMessage());
+            } catch (MyExceptionNameFormat e) {
+                System.out.println(e.getMessage() + "\"" + e.getCh() + "\" в слове \""
+                        + e.getName() + "\", в индексе под номером " + e.getIndex() + ".");
             }
         }
+        System.out.println("Программа завершена.");
 
 
     }
+
+    public static String[] ParsData(String data) {
+        return data.split(" ");
+    }
+
+    public static void writeToFile(String[] data) {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (String str : data) {
+            stringBuilder.append("<");
+            stringBuilder.append(str);
+            stringBuilder.append(">");
+        }
+
+        stringBuilder.append("\n");
+        String filename = data[0] + ".txt";
+
+        try (FileWriter fileWriter = new FileWriter(filename, true)) {
+            fileWriter.write(stringBuilder.toString());
+            System.out.println("Данные успешно добавлены в файл " + filename);
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("Проблема с чтением / записью в файл " + filename);
+        }
+    }
 }
+
